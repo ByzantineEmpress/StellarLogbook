@@ -54,9 +54,9 @@ class ExploreViewModel(
                 } else {
                     val visited = repository.visitedSystems().first().map { it.name }.toHashSet()
                     val sphere = api.sphereSystems(
-                        x = position.x!!.toFloat(),
-                        y = position.y!!.toFloat(),
-                        z = position.z!!.toFloat(),
+                        x = position.x,
+                        y = position.y,
+                        z = position.z,
                         radius = radiusLy.toInt()
                     )
                     _unvisited.value = ResultsState.Ready(sphere.filter { it.name !in visited })
@@ -118,7 +118,7 @@ class ExploreViewModel(
                     _download.value = DownloadState.Error("No position yet — sync or import first")
                     return@launch
                 }
-                packDownloader.downloadSliceFor(position.x!!) { progress ->
+                packDownloader.downloadSliceFor(position.x!!.toFloat()) { progress ->
                     val frac = if (progress.totalBytes > 0) {
                         progress.doneBytes.toFloat() / progress.totalBytes
                     } else 0f
