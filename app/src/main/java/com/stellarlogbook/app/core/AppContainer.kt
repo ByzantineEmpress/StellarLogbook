@@ -6,6 +6,7 @@ import com.stellarlogbook.app.BuildConfig
 import com.stellarlogbook.app.data.local.AppDatabase
 import com.stellarlogbook.app.data.local.ExplorerStore
 import com.stellarlogbook.app.data.local.RoomExplorerStore
+import com.stellarlogbook.app.data.pack.PackDownloader
 import com.stellarlogbook.app.data.pack.PackManager
 import com.stellarlogbook.app.data.prefs.UserPrefs
 import com.stellarlogbook.app.data.remote.EdsmApi
@@ -74,6 +75,7 @@ class AppContainer(context: Context) {
     val journalParser: JournalParser = JournalParser(json)
     val repository: ExplorerRepository = ExplorerRepository(db, userPrefs)
     val packManager: PackManager = PackManager(appContext)
+    val packDownloader: PackDownloader = PackDownloader(appContext, PackDownloader.DEFAULT_BASE_URL, httpClient)
 
     private val credentialsProvider = object : SyncCredentials {
         override suspend fun get(): SyncCredentials.Credentials? {
