@@ -2,6 +2,7 @@ package com.stellarlogbook.app.core
 
 import android.content.Context
 import androidx.room.Room
+import com.stellarlogbook.app.BuildConfig
 import com.stellarlogbook.app.data.local.AppDatabase
 import com.stellarlogbook.app.data.local.ExplorerStore
 import com.stellarlogbook.app.data.local.RoomExplorerStore

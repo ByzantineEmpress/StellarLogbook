@@ -78,13 +78,16 @@ class EdsmSyncEngine(
         Result.success(SyncSummary(pages, inserted))
     }
 
-    private fun parseEdsmDate(date: String): Instant? = try {
-        Instant.from(EDS_FORMAT.parse(date))
-    } catch (_: Exception) {
-        try {
-            Instant.parse(date)
+    private fun parseEdsmDate(date: String?): Instant? {
+        val d = date ?: return null
+        return try {
+            Instant.from(EDS_FORMAT.parse(d))
         } catch (_: Exception) {
-            null
+            try {
+                Instant.parse(d)
+            } catch (_: Exception) {
+                null
+            }
         }
     }
 
