@@ -1,0 +1,33 @@
+name: Pack pipeline
+
+on:
+  schedule:
+    - cron: "17 4 1 *" # monthly refresh of the known-systems index
+  workflow_dispatch:
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Build pack (stream EDSM dump -> 16 slices)
+        run: node --max-old-space-size=5500 pack/build_pack.mjs
+        env:
+          PACK_OUT_DIR: pack-out
+          SKIP_FULL: "1"
+
+      - name: Publish pack release
+        run: |
+          gh release create "pack-v$(date +%Y.%m.%d)" \
+            pack-out/stellar-pack-s*.bin \
+            pack-out/stellar-pack.manifest.json \
+            --title "Uncharted Pack - $(date +%Y-%m-%d)" \
+            --notes "Known-systems spatial index built from EDSM's nightly dump. The app auto-downloads the ~75 MB slice covering your position."
+        env:
+          GH_TOKEN: ${{ github.token }}
