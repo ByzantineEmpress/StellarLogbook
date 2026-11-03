@@ -1,5 +1,9 @@
 package com.stellarlogbook.app.ui.screens
 
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.provider.Settings
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,6 +19,7 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Switch
@@ -34,13 +39,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.content.FileProvider
+import com.stellarlogbook.app.BuildConfig
 import com.stellarlogbook.app.R
 import com.stellarlogbook.app.core.AppContainer
 import com.stellarlogbook.app.data.prefs.UserPrefs
+import com.stellarlogbook.app.data.sync.EdsmDiagnostics
 import com.stellarlogbook.app.data.sync.JournalImporter
 import com.stellarlogbook.app.data.sync.SyncScheduler
+import com.stellarlogbook.app.data.update.UpdateManager
 import com.stellarlogbook.app.ui.import.JournalImportButton
 import kotlinx.coroutines.launch
+import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -59,6 +69,15 @@ fun SettingsScreen(container: AppContainer, onBack: () -> Unit) {
     var wifiSel by remember { mutableStateOf(wifiPref) }
     var summary by remember { mutableStateOf<JournalImporter.Summary?>(null) }
     var importError by remember { mutableStateOf<String?>(null) }
+
+    var diag by remember { mutableStateOf<EdsmDiagnostics.Report?>(null) }
+    var diagRunning by remember { mutableStateOf(false) }
+
+    var updateInfo by remember { mutableStateOf<UpdateManager.UpdateInfo?>(null) }
+    var updateChecking by remember { mutableStateOf(false) }
+    var updateProgress by remember { mutableStateOf<UpdateManager.Progress?>(null) }
+    var updateReady by remember { mutableStateOf<File?>(null) }
+    var updateError by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(intervalPref) { intervalSel = intervalPref }
     LaunchedEffect(wifiPref) { wifiSel = wifiPref }
@@ -134,6 +153,52 @@ fun SettingsScreen(container: AppContainer, onBack: () -> Unit) {
                 }
             }
 
+            // EDSM diagnostics
+            item { HorizontalDivider() }
+            item {
+                Text(
+                    stringResource(R.string.settings_edsm_diag),
+                    style = MaterialTheme.typography.labelLarge
+                )
+            }
+            item {
+                Button(
+                    onClick = {
+                        scope.launch {
+                            diagRunning = true
+                            diag = container.diagnostics.run()
+                            diagRunning = false
+                        }
+                    },
+                    enabled = !diagRunning,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(stringResource(R.string.settings_edsm_test))
+                }
+            }
+            diag?.let { r ->
+                item {
+                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        if (!r.configured) {
+                            Text(stringResource(R.string.settings_edsm_not_configured), color = MaterialTheme.colorScheme.error)
+                        } else {
+                            Text("Position: msgnum ${r.positionMsgnum} · ${r.positionSystem ?: r.positionMsg ?: "—"}")
+                            Text("Flight logs (last 30 d): msgnum ${r.logsMsgnum} · ${r.logsCount ?: "?"} entries · ${r.logsMsg.orEmpty()}")
+                            r.newestEntry?.let { Text("Newest entry: $it") }
+                            if (r.logsMsgnum == 203) {
+                                Text(stringResource(R.string.settings_edsm_badkey), color = MaterialTheme.colorScheme.error)
+                            } else if (r.logsMsgnum == 100 && (r.logsCount ?: 0) == 0) {
+                                Text(
+                                    stringResource(R.string.settings_edsm_empty_hint),
+                                    color = MaterialTheme.colorScheme.tertiary
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Sync options
             item { HorizontalDivider() }
             item {
                 Text(
@@ -174,6 +239,7 @@ fun SettingsScreen(container: AppContainer, onBack: () -> Unit) {
                 }
             }
 
+            // Journal import
             item { HorizontalDivider() }
             item {
                 JournalImportButton(
@@ -206,6 +272,98 @@ fun SettingsScreen(container: AppContainer, onBack: () -> Unit) {
                     )
                 }
             }
+
+            // App updates
+            item { HorizontalDivider() }
+            item {
+                Text(
+                    stringResource(R.string.settings_updates),
+                    style = MaterialTheme.typography.labelLarge
+                )
+            }
+            item {
+                Text(stringResource(R.string.settings_version, BuildConfig.VERSION_NAME))
+            }
+            item {
+                Button(
+                    onClick = {
+                        scope.launch {
+                            updateChecking = true
+                            updateError = null
+                            updateInfo = null
+                            val info = container.updateManager.check()
+                            updateInfo = info
+                            updateChecking = false
+                            if (info == null) updateError = context.getString(R.string.settings_update_none)
+                        }
+                    },
+                    enabled = !updateChecking,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(stringResource(R.string.settings_update_check))
+                }
+            }
+            updateInfo?.let { info ->
+                item {
+                    Text(stringResource(R.string.settings_update_available, info.versionName))
+                }
+                item {
+                    Button(
+                        onClick = {
+                            scope.launch {
+                                updateError = null
+                                updateProgress = UpdateManager.Progress(0, 1)
+                                container.updateManager.download(info) { p -> updateProgress = p }
+                                    .fold(
+                                        onSuccess = { file -> updateReady = file },
+                                        onFailure = { e -> updateError = e.message }
+                                    )
+                                updateProgress = null
+                            }
+                        },
+                        enabled = updateReady == null && updateProgress == null,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(stringResource(R.string.settings_update_download))
+                    }
+                }
+                updateProgress?.let { p ->
+                    val frac = if (p.totalBytes > 0) p.doneBytes.toFloat() / p.totalBytes else 0f
+                    item { LinearProgressIndicator(progress = { frac }, modifier = Modifier.fillMaxWidth()) }
+                }
+            }
+            updateReady?.let { file ->
+                item {
+                    Button(
+                        onClick = { installApk(context, file) },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(stringResource(R.string.settings_update_install))
+                    }
+                }
+            }
+            updateError?.let {
+                item {
+                    Text(it, color = MaterialTheme.colorScheme.error)
+                }
+            }
         }
     }
+}
+
+private fun installApk(context: Context, file: File) {
+    if (!context.packageManager.canRequestPackageInstalls()) {
+        val intent = Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES).apply {
+            data = Uri.parse("package:${context.packageName}")
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        context.startActivity(intent)
+        return
+    }
+    val uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
+    val intent = Intent(Intent.ACTION_VIEW).apply {
+        setDataAndType(uri, "application/vnd.android.package-archive")
+        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK)
+    }
+    context.startActivity(intent)
 }

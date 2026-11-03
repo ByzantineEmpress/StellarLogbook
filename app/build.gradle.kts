@@ -14,9 +14,14 @@ android {
         applicationId = "com.stellarlogbook.app"
         minSdk = 26
         targetSdk = 35
-        versionCode = 1
-        versionName = "0.1.0-alpha"
+        versionCode = 4
+        versionName = "0.3.0-alpha"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    base {
+        // Proper APK file name: stellar-logbook-v0.3.0-alpha-debug.apk
+        archivesName.set("stellar-logbook-v" + defaultConfig.versionName)
     }
 
     buildTypes {

@@ -137,7 +137,15 @@ private fun SyncCard(
             when (status) {
                 is HomeViewModel.SyncStatus.Running -> CircularProgressIndicator()
                 is HomeViewModel.SyncStatus.Done ->
-                    Text("Synced ${status.entries} entries", style = MaterialTheme.typography.bodyMedium)
+                    if (status.entries == 0) {
+                        Text(
+                            stringResource(R.string.home_sync_empty_hint),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.tertiary
+                        )
+                    } else {
+                        Text("Synced ${status.entries} entries", style = MaterialTheme.typography.bodyMedium)
+                    }
                 is HomeViewModel.SyncStatus.Error ->
                     Text(status.message, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.error)
                 HomeViewModel.SyncStatus.Idle -> Text(

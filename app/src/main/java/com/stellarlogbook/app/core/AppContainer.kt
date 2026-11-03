@@ -13,9 +13,11 @@ import com.stellarlogbook.app.data.remote.EdsmApi
 import com.stellarlogbook.app.data.remote.JournalParser
 import com.stellarlogbook.app.data.remote.SpanshApi
 import com.stellarlogbook.app.data.repo.ExplorerRepository
+import com.stellarlogbook.app.data.sync.EdsmDiagnostics
 import com.stellarlogbook.app.data.sync.EdsmSyncEngine
 import com.stellarlogbook.app.data.sync.JournalImporter
 import com.stellarlogbook.app.data.sync.SyncCredentials
+import com.stellarlogbook.app.data.update.UpdateManager
 import kotlinx.coroutines.flow.first
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
@@ -87,6 +89,8 @@ class AppContainer(context: Context) {
 
     val syncEngine: EdsmSyncEngine = EdsmSyncEngine(api, credentialsProvider, store)
     val journalImporter: JournalImporter = JournalImporter(journalParser, store)
+    val diagnostics: EdsmDiagnostics = EdsmDiagnostics(api, userPrefs)
+    val updateManager: UpdateManager = UpdateManager(appContext, httpClient)
 }
 
 fun Context.container(): AppContainer =

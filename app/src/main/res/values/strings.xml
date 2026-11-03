@@ -80,4 +80,17 @@
     <string name="settings_save">Save</string>
     <string name="settings_help_title">How do I get an EDSM API key?</string>
     <string name="settings_help_steps">1. Register a free account at edsm.net and log in.\n2. Create your commander there with your exact in-game name (platform: PC).\n3. In your profile, generate an API key and copy it.\n4. Install EDDiscovery, enter the same commander name + key, and send your history to EDSM.\n5. Enter that commander name + key here — done.</string>
+    <string name="settings_edsm_diag">EDSM connection</string>
+    <string name="settings_edsm_test">Test EDSM connection</string>
+    <string name="settings_edsm_not_configured">Commander and API key not set yet.</string>
+    <string name="settings_edsm_empty_hint">EDSM has no flight logs for this commander. In EDDiscovery click “Sync To” (see help above), or import your journal files instead.</string>
+    <string name="settings_edsm_badkey">EDSM does not recognise this commander/API key (msgnum 203). Check the spelling and the key.</string>
+    <string name="settings_updates">App updates</string>
+    <string name="settings_version">Installed version: %1$s</string>
+    <string name="settings_update_check">Check for updates</string>
+    <string name="settings_update_none">You are on the latest version.</string>
+    <string name="settings_update_available">Update available: %1$s</string>
+    <string name="settings_update_download">Download update</string>
+    <string name="settings_update_install">Install update</string>
+    <string name="home_sync_empty_hint">EDSM has no flight logs for this commander yet. In EDDiscovery click “Sync To”, or import your journal files in Discoveries.</string>
 </resources>

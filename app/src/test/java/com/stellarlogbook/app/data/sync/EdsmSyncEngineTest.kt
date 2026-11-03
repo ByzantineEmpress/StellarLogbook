@@ -136,4 +136,36 @@ class EdsmSyncEngineTest {
         assertTrue(result.isFailure)
         assertEquals(0, server.requestCount)
     }
+
+    @Test
+    fun emptyWideRangeFallsBackToLast30Days() = runTest {
+        // First request (start = 2014-12-01) returns msgnum 100 with no logs;
+        // the fallback narrows the range to the last 30 days and finds entries.
+        server.enqueue(MockResponse().setBody("""{"msgnum":100,"msg":"OK","logs":[]}"""))
+        server.enqueue(
+            MockResponse().setBody(
+                """{"msgnum":100,"msg":"OK","logs":[
+                    {"system":"Sol","date":"2026-10-01 10:00:00","coordinates":{"x":0,"y":0,"z":0}},
+                    {"system":"Deciat","date":"2026-10-02 12:00:00","coordinates":{"x":1,"y":2,"z":3}}
+                ]}"""
+            )
+        )
+
+        val result = EdsmSyncEngine(api, credentials, store).sync().getOrThrow()
+        assertEquals(2, result.entries)
+        assertEquals(1, result.pages)
+        assertEquals(2, store.systems.size)
+
+        // Two requests were made; the second used a ~30-day-old startDateTime.
+        val first = server.takeRequest().requestUrl!!
+        val second = server.takeRequest().requestUrl!!
+        assertTrue(first.queryParameter("startDateTime")!!.startsWith("2014-12-01"))
+        val narrowStart = second.queryParameter("startDateTime")!!
+        val narrowInstant = Instant.parse(narrowStart.replace(" ", "T") + "Z")
+        val ageDays = java.time.Duration.between(narrowInstant, Instant.now()).toDays()
+        assertTrue("narrow start was $narrowStart ($ageDays days ago)", ageDays in 28..31)
+
+        // A checkpoint was stored so the next sync resumes from the newest entry.
+        assertNotNull(store.checkpoints[EdsmSyncEngine.SOURCE]?.cursor)
+    }
 }
