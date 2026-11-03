@@ -45,6 +45,12 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+
+    sourceSets {
+        getByName("androidTest") {
+            assets.srcDir("$projectDir/schemas")
+        }
+    }
 }
 
 // Room schema export (required for migration testing from v2 onward).
@@ -91,8 +97,4 @@ dependencies {
     androidTestImplementation(platform(libs.androidx.compose.bom))
 
     debugImplementation(libs.androidx.compose.ui.tooling)
-}
-
-sourceSets {
-    getByName("androidTest").assets.srcDir("$projectDir/schemas")
 }

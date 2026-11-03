@@ -7,24 +7,23 @@ journal files and syncs them automatically every time you play.
 ## Step 1 — EDSM account + commander (3 min)
 
 1. Go to <https://www.edsm.net> → **Register** (free; email + password).
-2. Log in, click your name (top right) → **Commander** → create a commander:
+2. Log in, click your name (top right) → **My API Key** → copy the key (numbers + letters).
+3. Click your name (top right) → **Commander** → create a commander:
    - Name: **exactly** your in-game name (e.g. `BYZANTINE EMPRESS`) — capitalisation matters.
    - Platform: **PC**.
-3. Still in your profile → **API Key** section → **create/generate an API key**.
-   Copy it. Keep it private: it identifies you on EDSM.
 
 ## Step 2 — EDDiscovery (3 min)
 
 1. Download the latest release: <https://github.com/EDDiscovery/EDDiscovery/releases>
    (installer exe). Install and launch.
-2. In EDDiscovery **Settings**:
-   - Tab **EDSM**: enter the same commander name + the API key, enable
-     **"Send events to EDSM"** (and optionally EDDN — that's how you help the
-     community; not required for the app).
-   - Point it at your commander (it auto-detects the journal folder under
-     `Saved Games\Frontier Developments\Elite Dangerous`).
-3. Back on the main window: **Admin → Send unsynced to EDSM** (or the sync icon)
-   to upload your existing history. New sessions upload automatically from now on.
+2. Open the **Settings panel** (the settings icon in the top bar).
+3. Go to the **Commanders** tab → select your commander → click **Edit**.
+4. In the **EDSM section** of the commander dialog:
+   - **EDSM commander name**: leave blank if it matches your in-game name, otherwise enter it.
+   - **EDSM API key**: paste the key from Step 1.
+5. Close Settings. Back on the main window, click **"Sync To"** (top area, next to your
+   commander name) to upload your existing history to EDSM. New sessions upload
+   automatically from now on.
 
 ## Step 3 — Verify (1 min)
 
