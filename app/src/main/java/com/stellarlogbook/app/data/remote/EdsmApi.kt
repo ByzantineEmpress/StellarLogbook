@@ -6,7 +6,7 @@ import retrofit2.http.Query
 /**
  * EDSM endpoints verified in Phase 0 (2026-11-03).
  * - api-v1/system, api-v1/sphere-systems: public, no key needed.
- * - api-logs-v1/*: require YOUR commander name + API key.
+ * - api-logs-v1 endpoints: require YOUR commander name + API key.
  * Respect EDSM rate limits: paginate, back off on 429/503, cache aggressively,
  * and set a real User-Agent (done in AppContainer).
  */
