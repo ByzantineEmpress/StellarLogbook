@@ -12,12 +12,22 @@ commander has reported visiting.
 
 **Phase 0 (research + scaffold)** — complete. See [docs/phase0-findings.md](docs/phase0-findings.md).
 
-**Phase 1 (MVP)** — code-complete in this repo (2026-11-03): EDSM sync engine with
+**Phase 1 (MVP)** — shipped (v0.1.0-alpha): EDSM sync engine with
 pagination/checkpoints + MockWebServer unit tests, journal importer (visits, first
 discoveries, mappings, codex) with idempotency tests, system detail screen with
-bookmarks/notes and live EDSM community info, journal import UI (SAF picker),
-encrypted API-key storage, auto-sync scheduling with Wi-Fi-only option, onboarding
-help. **Pending:** first CI build (push to GitHub) and a real-account sync test.
+bookmarks/notes and live EDSM/Spansh info, journal import UI (SAF picker),
+encrypted API-key storage, auto-sync scheduling, onboarding help. CI green.
+
+**Phase 2 (Explore + Uncharted Pack)** — in progress:
+- Explore tab: *Unvisited near me* (EDSM sphere search minus my visits) and
+  *Uncharted near me* (local gap search) with copy-to-clipboard results.
+- **Uncharted Pack v2 built**: EDSM has **99.5M systems with coordinates** (not
+  ~6.5M as Phase 0 assumed). The pack stores float32 coordinates only —
+  full ~1.2 GB, shipped as **16 regional slices of ~75 MB**; the app downloads
+  the one covering your position. Gap detection is exact without a grid: a
+  32-ly cell is empty iff its centre has no known system within 27.7 ly.
+- Pack builder: `pack/build_pack.mjs` (streams the 3.7 GB dump, retries on
+  resets); `.github/workflows/pack.yml` rebuilds + releases monthly.
 
 ## The four questions this app answers
 
