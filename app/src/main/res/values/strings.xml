@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Stellar Logbook</string>
+
+    <!-- Bottom navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_visited">Visited</string>
+    <string name="nav_discoveries">Discoveries</string>
+    <string name="nav_explore">Explore</string>
+    <string name="nav_map">Map</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_title">Stellar Logbook</string>
+    <string name="onboarding_subtitle">Your Elite: Dangerous exploration companion</string>
+    <string name="onboarding_how">Link your EDSM commander to auto-track every system you visit.
+        First discoveries come from your journal files (Phase 2a).</string>
+    <string name="onboarding_commander_label">EDSM commander name</string>
+    <string name="onboarding_apikey_label">EDSM API key</string>
+    <string name="onboarding_start">Start syncing</string>
+    <string name="onboarding_skip">I\'ll import journal files instead</string>
+    <string name="onboarding_help">How do I get an EDSM API key?</string>
+
+    <!-- Home -->
+    <string name="home_current_system">Current system</string>
+    <string name="home_totals">Exploration totals</string>
+    <string name="home_sync">Sync</string>
+    <string name="home_sync_now">SYNC NOW</string>
+    <string name="home_sync_never">Never synced</string>
+    <string name="home_visited_count">Systems visited</string>
+    <string name="home_discovery_count">First discoveries</string>
+    <string name="home_codex_count">Codex entries</string>
+    <string name="home_quick_actions">Quick actions</string>
+
+    <!-- Common -->
+    <string name="search_hint">Search systems…</string>
+    <string name="empty_visited">No systems yet — run a sync from Home.</string>
+    <string name="empty_discoveries">No discoveries yet — journal import arrives in Phase 2a.</string>
+    <string name="explore_placeholder">Unvisited &amp; uncharted search arrives in Phase 2, powered by the backend.</string>
+    <string name="map_placeholder">Galaxy map arrives in Phase 3.</string>
+    <!-- System detail -->
+    <string name="detail_not_found">System not found in local database</string>
+    <string name="detail_identity">Local data</string>
+    <string name="detail_id64">id64: %1$s</string>
+    <string name="detail_coords">Coordinates: %1$s</string>
+    <string name="detail_dist_sol">%1$s ly from Sol</string>
+    <string name="detail_visits">Visits: %1$d</string>
+    <string name="detail_first_visit">First visit: %1$s</string>
+    <string name="detail_last_visit">Last visit: %1$s</string>
+    <string name="detail_known">Known to the community</string>
+    <string name="detail_bookmark">Bookmarked</string>
+    <string name="detail_notes">Notes</string>
+    <string name="detail_save_notes">Save notes</string>
+    <string name="detail_community">Community data (EDSM)</string>
+    <string name="detail_primary_star">Primary star: %1$s (%2$s)</string>
+    <string name="detail_allegiance">Allegiance: %1$s</string>
+    <string name="detail_population">Population: %1$s</string>
+    <string name="detail_discovered">System first reported: %1$s by %2$s</string>
+    <string name="detail_lookup_error">Lookup failed: %1$s</string>
+
+    <!-- Journal import -->
+    <string name="import_title">Import journal files</string>
+    <string name="import_summary">Imported %1$d visits, %2$d first discoveries, %3$d first mappings, %4$d codex entries (%5$d lines).</string>
+    <string name="import_error">Import failed: %1$s</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_commander">Commander credentials</string>
+    <string name="settings_not_set">Not set</string>
+    <string name="settings_sync_options">Sync options</string>
+    <string name="settings_interval">Auto-sync interval</string>
+    <string name="settings_wifi_only">Wi-Fi only</string>
+    <string name="settings_off">Off</string>
+    <string name="settings_save">Save</string>
+    <string name="settings_help_title">How do I get an EDSM API key?</string>
+    <string name="settings_help_steps">1. Register a free account at edsm.net and log in.\n2. Create your commander there with your exact in-game name (platform: PC).\n3. In your profile, generate an API key and copy it.\n4. Install EDDiscovery, enter the same commander name + key, and send your history to EDSM.\n5. Enter that commander name + key here — done.</string>
+</resources>
