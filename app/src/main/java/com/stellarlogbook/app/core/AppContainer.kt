@@ -6,9 +6,11 @@ import com.stellarlogbook.app.BuildConfig
 import com.stellarlogbook.app.data.local.AppDatabase
 import com.stellarlogbook.app.data.local.ExplorerStore
 import com.stellarlogbook.app.data.local.RoomExplorerStore
+import com.stellarlogbook.app.data.pack.PackManager
 import com.stellarlogbook.app.data.prefs.UserPrefs
 import com.stellarlogbook.app.data.remote.EdsmApi
 import com.stellarlogbook.app.data.remote.JournalParser
+import com.stellarlogbook.app.data.remote.SpanshApi
 import com.stellarlogbook.app.data.repo.ExplorerRepository
 import com.stellarlogbook.app.data.sync.EdsmSyncEngine
 import com.stellarlogbook.app.data.sync.JournalImporter
@@ -56,6 +58,13 @@ class AppContainer(context: Context) {
         .build()
         .create(EdsmApi::class.java)
 
+    val spanshApi: SpanshApi = Retrofit.Builder()
+        .baseUrl("https://spansh.co.uk/")
+        .client(httpClient)
+        .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
+        .build()
+        .create(SpanshApi::class.java)
+
     val db: AppDatabase =
         Room.databaseBuilder(appContext, AppDatabase::class.java, AppDatabase.NAME).build()
 
@@ -64,6 +73,7 @@ class AppContainer(context: Context) {
     val userPrefs: UserPrefs = UserPrefs(appContext)
     val journalParser: JournalParser = JournalParser(json)
     val repository: ExplorerRepository = ExplorerRepository(db, userPrefs)
+    val packManager: PackManager = PackManager(appContext)
 
     private val credentialsProvider = object : SyncCredentials {
         override suspend fun get(): SyncCredentials.Credentials? {

@@ -15,6 +15,9 @@ interface BodyDao {
     @Query("SELECT * FROM bodies WHERE systemName = :systemName AND bodyId = :bodyId LIMIT 1")
     suspend fun get(systemName: String, bodyId: Long): BodyEntity?
 
+    @Query("SELECT * FROM bodies WHERE systemName = :systemName ORDER BY bodyId")
+    fun bodiesFor(systemName: String): Flow<List<BodyEntity>>
+
     @Query("SELECT * FROM bodies WHERE myFirstDiscovery = 1 OR myFirstMapping = 1 ORDER BY discoveredAt DESC")
     fun myDiscoveries(): Flow<List<BodyEntity>>
 

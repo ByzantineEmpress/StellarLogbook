@@ -56,6 +56,13 @@
     <string name="detail_population">Population: %1$s</string>
     <string name="detail_discovered">System first reported: %1$s by %2$s</string>
     <string name="detail_lookup_error">Lookup failed: %1$s</string>
+    <string name="detail_bodies">Bodies (Spansh)</string>
+    <string name="detail_bodies_hint">Body data appears once the system has an id64.</string>
+    <string name="detail_bodies_none">No body data.</string>
+    <string name="detail_bodies_more">…and %1$d more bodies.</string>
+    <string name="detail_scan_value">Scan ≈ %1$s</string>
+    <string name="detail_map_value">Map ≈ %1$s</string>
+    <string name="detail_mine">★ yours</string>
 
     <!-- Journal import -->
     <string name="import_title">Import journal files</string>

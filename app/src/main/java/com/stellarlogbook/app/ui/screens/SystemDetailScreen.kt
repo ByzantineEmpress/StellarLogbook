@@ -44,6 +44,66 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+@Composable
+private fun SpanshBodiesCard(
+    state: SystemDetailViewModel.SpanshState,
+    localBodies: List<com.stellarlogbook.app.data.local.entity.BodyEntity>
+) {
+    Card(Modifier.fillMaxWidth()) {
+        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Text(
+                stringResource(R.string.detail_bodies),
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            when (state) {
+                SystemDetailViewModel.SpanshState.Idle -> Text(stringResource(R.string.detail_bodies_hint))
+                SystemDetailViewModel.SpanshState.Loading -> CircularProgressIndicator()
+                is SystemDetailViewModel.SpanshState.Error ->
+                    Text(stringResource(R.string.detail_lookup_error, state.message), color = MaterialTheme.colorScheme.error)
+                is SystemDetailViewModel.SpanshState.Ready -> {
+                    if (state.bodies.isEmpty()) {
+                        Text(stringResource(R.string.detail_bodies_none))
+                    } else {
+                        state.bodies.take(MAX_BODIES).forEach { body ->
+                            val mine = localBodies.any {
+                                it.bodyName == body.name && (it.myFirstDiscovery || it.myFirstMapping)
+                            }
+                            val values = buildList {
+                                body.estimatedScanValue?.let { add(stringResource(R.string.detail_scan_value, "%,d".format(it))) }
+                                body.estimatedMappingValue?.let { add(stringResource(R.string.detail_map_value, "%,d".format(it))) }
+                            }.joinToString(" · ")
+                            Column(Modifier.padding(vertical = 2.dp)) {
+                                Text(
+                                    "${body.name ?: "?"} — ${body.subtype ?: body.type ?: "?"}" +
+                                        if (mine) "  ${stringResource(R.string.detail_mine)}" else "",
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                                if (values.isNotEmpty()) {
+                                    Text(
+                                        values,
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
+                            }
+                        }
+                        if (state.bodies.size > MAX_BODIES) {
+                            Text(
+                                stringResource(R.string.detail_bodies_more, state.bodies.size - MAX_BODIES),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+private const val MAX_BODIES = 50
+
 private fun fmt(ts: Long?): String? = ts?.let {
     SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(Date(it))
 }
@@ -52,9 +112,13 @@ private fun fmt(ts: Long?): String? = ts?.let {
 @Composable
 fun SystemDetailScreen(container: AppContainer, name: String, onBack: () -> Unit) {
     val vm: SystemDetailViewModel =
-        viewModel(key = "system-$name") { SystemDetailViewModel(name, container.repository, container.api) }
+        viewModel(key = "system-$name") {
+            SystemDetailViewModel(name, container.repository, container.api, container.spanshApi)
+        }
     val system by vm.system.collectAsState(initial = null)
     val community by vm.community.collectAsState()
+    val spansh by vm.spansh.collectAsState()
+    val localBodies by container.repository.observeBodies(name).collectAsState(initial = emptyList())
 
     Scaffold(
         topBar = {
@@ -83,6 +147,7 @@ fun SystemDetailScreen(container: AppContainer, name: String, onBack: () -> Unit
                 item { BookmarkNotesCard(sys, vm) }
             }
             item { CommunityCard(community) }
+            item { SpanshBodiesCard(spansh, localBodies) }
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.stellarlogbook.app.data.repo
 
 import com.stellarlogbook.app.data.local.AppDatabase
+import com.stellarlogbook.app.data.local.entity.BodyEntity
 import com.stellarlogbook.app.data.local.entity.DiscoveryEntity
 import com.stellarlogbook.app.data.local.entity.SystemEntity
 import com.stellarlogbook.app.data.prefs.UserPrefs
@@ -18,6 +19,7 @@ class ExplorerRepository(
     fun visitedCount(): Flow<Int> = db.systemDao().visitedCount()
     fun latestVisit(): Flow<SystemEntity?> = db.systemDao().latestVisit()
     fun observeSystem(name: String): Flow<SystemEntity?> = db.systemDao().observe(name)
+    fun observeBodies(systemName: String): Flow<List<BodyEntity>> = db.bodyDao().bodiesFor(systemName)
     fun discoveries(): Flow<List<DiscoveryEntity>> = db.discoveryDao().all()
     fun discoveryCount(): Flow<Int> = db.discoveryDao().countByKind(DiscoveryEntity.KIND_DISCOVERY)
     fun codexCount(): Flow<Int> = db.discoveryDao().countByKind(DiscoveryEntity.KIND_CODEX)
