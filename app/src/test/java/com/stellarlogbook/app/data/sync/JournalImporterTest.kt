@@ -16,7 +16,7 @@ class JournalImporterTest {
     private val location = """{"timestamp":"2026-10-01T22:00:00Z","event":"Location","StarSystem":"System A","SystemAddress":111,"StarPos":[1.0,2.0,3.0]}"""
     private val scanFirst = """{"timestamp":"2026-10-01T21:51:07Z","event":"Scan","BodyName":"System A 1","BodyID":1,"StarSystem":"System A","SystemAddress":111,"PlanetClass":"Icy body","WasDiscovered":false,"WasMapped":false}"""
     private val scanAgain = """{"timestamp":"2026-10-02T10:00:00Z","event":"Scan","BodyName":"System A 1","BodyID":1,"StarSystem":"System A","SystemAddress":111,"PlanetClass":"Icy body","WasDiscovered":true,"WasMapped":true}"""
-    private val codexNew = """{"timestamp":"2026-10-02T13:32:05Z","event":"CodexEntry","EntryID":1,"Name":"\$Codex_X;","Name_Localised":"Bacterium A","Category":"\$Codex_Category_Biology;","Category_Localised":"Biological","Region":"\$Codex_RegionName_18;","Region_Localised":"Inner Orion Spur","System":"System B","SystemAddress":222,"BodyID":1,"IsNewEntry":true}"""
+    private val codexNew = """{"timestamp":"2026-10-02T13:32:05Z","event":"CodexEntry","EntryID":1,"Name":"${'$'}Codex_X;","Name_Localised":"Bacterium A","Category":"${'$'}Codex_Category_Biology;","Category_Localised":"Biological","Region":"${'$'}Codex_RegionName_18;","Region_Localised":"Inner Orion Spur","System":"System B","SystemAddress":222,"BodyID":1,"IsNewEntry":true}"""
     private val codexOld = codexNew.replace("\"IsNewEntry\":true", "\"IsNewEntry\":false")
 
     @Test
@@ -49,8 +49,7 @@ class JournalImporterTest {
 
     @Test
     fun repeatedImportsAreIdempotent() = runTest {
-        val lines = listOf(fsd, scanFirst, codexNew).asSequence()
-        val first = importer.importLines(lines)
+        val first = importer.importLines(listOf(fsd, scanFirst, codexNew).asSequence())
         val second = importer.importLines(listOf(fsd, scanFirst, codexNew).asSequence())
 
         assertEquals(first.visits, second.visits)
