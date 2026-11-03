@@ -126,7 +126,7 @@ fun AppNavHost(container: AppContainer) {
                 )
             }
             composable("discoveries") { DiscoveriesScreen(container) }
-            composable("explore") { ExploreScreen() }
+            composable("explore") { ExploreScreen(container) }
             composable("map") { MapScreen() }
             composable(
                 route = "system/{name}",

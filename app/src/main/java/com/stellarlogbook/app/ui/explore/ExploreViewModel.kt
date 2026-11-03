@@ -54,9 +54,9 @@ class ExploreViewModel(
                 } else {
                     val visited = repository.visitedSystems().first().map { it.name }.toHashSet()
                     val sphere = api.sphereSystems(
-                        x = position.x,
-                        y = position.y,
-                        z = position.z,
+                        x = position.x!!.toFloat(),
+                        y = position.y!!.toFloat(),
+                        z = position.z!!.toFloat(),
                         radius = radiusLy.toInt()
                     )
                     _unvisited.value = ResultsState.Ready(sphere.filter { it.name !in visited })
@@ -87,9 +87,9 @@ class ExploreViewModel(
                         val gaps = withContext(Dispatchers.Default) {
                             pack.use {
                                 it.findNearestGaps(
-                                    originX = position.x,
-                                    originY = position.y,
-                                    originZ = position.z,
+                                    originX = position.x!!.toFloat(),
+                                    originY = position.y!!.toFloat(),
+                                    originZ = position.z!!.toFloat(),
                                     searchRadiusLy = searchRadiusLy,
                                     maxDistanceLy = maxDistanceLy,
                                     maxResults = maxResults
