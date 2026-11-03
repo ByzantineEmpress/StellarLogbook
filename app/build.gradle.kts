@@ -46,6 +46,15 @@ android {
         }
     }
 
+    testOptions {
+        unitTests.all {
+            it.testLogging {
+                events("failed", "skipped")
+                exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+            }
+        }
+    }
+
     sourceSets {
         getByName("androidTest") {
             assets.srcDir("$projectDir/schemas")

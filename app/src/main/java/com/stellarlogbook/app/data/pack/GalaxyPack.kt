@@ -40,7 +40,7 @@ class GalaxyPack(file: File) : Closeable {
         raf.readFully(h)
         require(h[0] == 'S'.code.toByte() && h[1] == 'L'.code.toByte() &&
             h[2] == 'P'.code.toByte() && h[3] == 'K'.code.toByte()) { "Bad pack magic" }
-        require(h[4].toInt() and 0xFF == VERSION) { "Unsupported pack version" }
+        require(h[5].toInt() and 0xFF == VERSION) { "Unsupported pack version" }
         count = le32(h, 6)
         minX = leF32(h, 10); maxX = leF32(h, 14)
         minY = leF32(h, 18); maxY = leF32(h, 22)
