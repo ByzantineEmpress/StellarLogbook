@@ -218,15 +218,19 @@ const manifest = {
   cellSizeLy: CELL,
   slices: SLICES,
   bounds: { minX, maxX, minY, maxY, minZ, maxZ },
-  full: {
-    file: "stellar-pack.bin",
-    bytes: fs.statSync(`${OUT_DIR}/stellar-pack.bin`).size,
-  },
+  full: SKIP_FULL
+    ? null
+    : {
+        file: "stellar-pack.bin",
+        bytes: fs.statSync(`${OUT_DIR}/stellar-pack.bin`).size,
+      },
   slices,
 };
 fs.writeFileSync(`${OUT_DIR}/stellar-pack.manifest.json`, JSON.stringify(manifest, null, 2));
 console.log(`\n=== PACK v${VERSION} BUILT ===`);
 console.log(`records: ${count}, skipped: ${skipped}`);
 console.log(`bounds: x [${minX.toFixed(0)}, ${maxX.toFixed(0)}] y [${minY.toFixed(0)}, ${maxY.toFixed(0)}] z [${minZ.toFixed(0)}, ${maxZ.toFixed(0)}]`);
-console.log(`full: ${(manifest.full.bytes / 1e6).toFixed(1)} MB`);
+if (!SKIP_FULL) {
+  console.log(`full: ${(manifest.full.bytes / 1e6).toFixed(1)} MB`);
+}
 console.log(`total time: ${Math.round((Date.now() - t0) / 1000)}s`);
