@@ -5,6 +5,9 @@ on:
     - cron: "17 4 1 * *" # monthly refresh of the known-systems index
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build-and-release:
     runs-on: ubuntu-latest
