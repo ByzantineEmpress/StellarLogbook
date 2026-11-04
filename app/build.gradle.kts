@@ -6,6 +6,9 @@ plugins {
     alias(libs.plugins.ksp)
 }
 
+import java.io.File
+import java.util.Base64
+
 android {
     namespace = "com.stellarlogbook.app"
     compileSdk = 35
@@ -29,8 +32,8 @@ android {
     // per run, which Android rejects as a signature mismatch).
     val keystoreB64 = System.getenv("STELLAR_KEYSTORE_B64")
     if (!keystoreB64.isNullOrBlank()) {
-        val ksFile = java.io.File(projectDir, "stellar-upload.keystore")
-        ksFile.writeBytes(java.util.Base64.getDecoder().decode(keystoreB64))
+        val ksFile = File(projectDir, "stellar-upload.keystore")
+        ksFile.writeBytes(Base64.getDecoder().decode(keystoreB64))
         signingConfigs {
             create("pinned") {
                 storeFile = ksFile
