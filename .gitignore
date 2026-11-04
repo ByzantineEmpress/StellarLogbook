@@ -11,3 +11,4 @@
 *.aab
 app/schemas/*
 !app/schemas/README.md
+.release*/
