@@ -53,6 +53,8 @@ class UserPrefs(context: Context) {
     val targetY: Flow<Float?> = ds.data.map { it[KEY_TARGET_Y] }
     val targetZ: Flow<Float?> = ds.data.map { it[KEY_TARGET_Z] }
 
+    val packBaseUrl: Flow<String?> = ds.data.map { it[KEY_PACK_BASE_URL] }
+
     /** API key: read-through cache from encrypted storage (no flow — encrypted). */
     suspend fun apiKey(): String? {
         _apiKey.value?.let { return it }
@@ -96,6 +98,10 @@ class UserPrefs(context: Context) {
         }
     }
 
+    suspend fun setPackBaseUrl(url: String) {
+        ds.edit { it[KEY_PACK_BASE_URL] = url.trimEnd('/') + "/" }
+    }
+
     companion object {
         const val DEFAULT_INTERVAL = 6
         private const val KEY_API_KEY = "edsm_api_key" // key inside EncryptedSharedPreferences
@@ -107,5 +113,6 @@ class UserPrefs(context: Context) {
         private val KEY_TARGET_X = floatPreferencesKey("target_x")
         private val KEY_TARGET_Y = floatPreferencesKey("target_y")
         private val KEY_TARGET_Z = floatPreferencesKey("target_z")
+        private val KEY_PACK_BASE_URL = stringPreferencesKey("pack_base_url")
     }
 }

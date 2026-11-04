@@ -28,9 +28,12 @@ class ExplorerRepository(
     fun codexCount(): Flow<Int> = db.discoveryDao().countByKind(DiscoveryEntity.KIND_CODEX)
     fun lastSyncAt(): Flow<Long> = prefs.lastSyncAt
     fun commanderName(): Flow<String?> = prefs.commanderName
+    fun packBaseUrl(): Flow<String?> = prefs.packBaseUrl
 
     suspend fun setCredentials(commander: String, apiKey: String) =
         prefs.setCredentials(commander, apiKey)
+
+    suspend fun setPackBaseUrl(url: String) = prefs.setPackBaseUrl(url)
 
     suspend fun setBookmarked(name: String, value: Boolean) =
         db.systemDao().setBookmarked(name, value)

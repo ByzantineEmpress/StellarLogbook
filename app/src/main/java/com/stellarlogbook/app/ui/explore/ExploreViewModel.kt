@@ -122,7 +122,8 @@ class ExploreViewModel(
                     _download.value = DownloadState.Error("No position yet — sync or import first")
                     return@launch
                 }
-                packDownloader.downloadSliceFor(position.x!!.toFloat()) { progress ->
+                val baseUrl = repository.packBaseUrl().first() ?: PackDownloader.DEFAULT_BASE_URL
+                packDownloader.downloadSliceFor(position.x!!.toFloat(), baseUrl) { progress ->
                     val frac = if (progress.totalBytes > 0) {
                         progress.doneBytes.toFloat() / progress.totalBytes
                     } else 0f

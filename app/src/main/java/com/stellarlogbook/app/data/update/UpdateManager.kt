@@ -30,7 +30,9 @@ class UpdateManager(
         val versionName: String,
         val apkAsset: String,
         val downloadUrl: String,
-        val notes: String?
+        val notes: String?,
+        /** Current Uncharted Pack base URL, carried by the app release. */
+        val packBaseUrl: String? = null
     )
 
     data class Progress(val doneBytes: Long, val totalBytes: Long)
@@ -49,7 +51,14 @@ class UpdateManager(
                 ?: return@withContext null
             val url = apk.browserDownloadUrl ?: return@withContext null
             if (version.versionCode <= BuildConfig.VERSION_CODE) return@withContext null
-            UpdateInfo(version.versionCode, version.versionName, version.apkAsset, url, release.body)
+            UpdateInfo(
+                versionCode = version.versionCode,
+                versionName = version.versionName,
+                apkAsset = version.apkAsset,
+                downloadUrl = url,
+                notes = release.body,
+                packBaseUrl = version.packBaseUrl
+            )
         } catch (_: Exception) {
             null
         }
@@ -116,7 +125,8 @@ class UpdateManager(
     private data class VersionJson(
         val versionCode: Int,
         val versionName: String,
-        val apkAsset: String
+        val apkAsset: String,
+        val packBaseUrl: String? = null
     )
 
     @Serializable

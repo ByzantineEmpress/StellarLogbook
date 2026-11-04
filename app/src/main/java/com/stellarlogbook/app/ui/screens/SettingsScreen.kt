@@ -294,7 +294,11 @@ fun SettingsScreen(container: AppContainer, onBack: () -> Unit) {
                             val info = container.updateManager.check()
                             updateInfo = info
                             updateChecking = false
-                            if (info == null) updateError = context.getString(R.string.settings_update_none)
+                            if (info != null) {
+                                info.packBaseUrl?.let { container.repository.setPackBaseUrl(it) }
+                            } else {
+                                updateError = context.getString(R.string.settings_update_none)
+                            }
                         }
                     },
                     enabled = !updateChecking,

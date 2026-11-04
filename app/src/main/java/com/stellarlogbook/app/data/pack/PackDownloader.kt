@@ -26,10 +26,14 @@ class PackDownloader(
 
     data class Progress(val doneBytes: Long, val totalBytes: Long, val currentFile: String)
 
-    suspend fun downloadSliceFor(x: Float, onProgress: (Progress) -> Unit = {}): Result<File> =
+    suspend fun downloadSliceFor(
+        x: Float,
+        baseUrl: String = DEFAULT_BASE_URL,
+        onProgress: (Progress) -> Unit = {}
+    ): Result<File> =
         withContext(Dispatchers.IO) {
             try {
-                val manifest = fetchManifest()
+                val manifest = fetchManifest(baseUrl)
                 val slice = manifest.slices.firstOrNull { s ->
                     val minX = s.minX ?: return@firstOrNull false
                     val maxX = s.maxX ?: return@firstOrNull false
@@ -73,7 +77,7 @@ class PackDownloader(
             }
         }
 
-    private suspend fun fetchManifest(): PackManifestDto = withContext(Dispatchers.IO) {
+    private suspend fun fetchManifest(baseUrl: String): PackManifestDto = withContext(Dispatchers.IO) {
         val request = Request.Builder().url(baseUrl + "stellar-pack.manifest.json").build()
         client.newCall(request).execute().use { response ->
             if (!response.isSuccessful) throw IllegalStateException("HTTP ${response.code} fetching manifest")
