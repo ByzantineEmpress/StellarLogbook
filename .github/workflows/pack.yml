@@ -2,7 +2,7 @@ name: Pack pipeline
 
 on:
   schedule:
-    - cron: "17 4 1 *" # monthly refresh of the known-systems index
+    - cron: "17 4 1 * *" # monthly refresh of the known-systems index
   workflow_dispatch:
 
 jobs:
