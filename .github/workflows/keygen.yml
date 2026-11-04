@@ -1,0 +1,26 @@
+name: Keygen
+
+on:
+  workflow_dispatch:
+
+jobs:
+  keygen:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - name: Generate permanent upload keystore
+        run: |
+          keytool -genkeypair -v \
+            -keystore stellar-upload.keystore \
+            -alias stellar \
+            -keyalg RSA -keysize 2048 -validity 10950 \
+            -storepass slpw-9f3c1a7b-4e2d-8a6c \
+            -keypass slpw-9f3c1a7b-4e2d-8a6c \
+            -dname "CN=Stellar Logbook, OU=Community, O=StellarLogbook, C=EU"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: stellar-upload-keystore
+          path: stellar-upload.keystore
