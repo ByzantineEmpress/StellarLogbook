@@ -93,4 +93,23 @@
     <string name="settings_update_download">Download update</string>
     <string name="settings_update_install">Install update</string>
     <string name="home_sync_empty_hint">EDSM has no flight logs for this commander yet. In EDDiscovery click “Sync To”, or import your journal files in Discoveries.</string>
+
+    <!-- Map -->
+    <string name="map_zoom_in">Zoom in</string>
+    <string name="map_zoom_out">Zoom out</string>
+    <string name="map_reset">Reset</string>
+    <string name="map_legend_discoveries">First discoveries</string>
+    <string name="map_legend_trail">Trail</string>
+    <string name="map_legend_visited">Visited</string>
+    <string name="map_legend_known">Known systems</string>
+
+    <!-- Target -->
+    <string name="target_channel">Exploration target</string>
+    <string name="target_notification_text">Target set — tap to open</string>
+    <string name="target_notification_text_dist">Target set · %1$s ly from your position</string>
+
+    <!-- About -->
+    <string name="settings_about">About</string>
+    <string name="settings_about_text">Stellar Logbook is an unofficial fan tool for Elite: Dangerous. Your exploration data stays on this device; the only network calls go to EDSM and Spansh (community services) and GitHub (updates, the Uncharted Pack). Elite: Dangerous is a trademark of Frontier Developments; this app is not affiliated with Frontier. Community data courtesy of EDSM, Spansh, EDDN and EDDiscovery.</string>
+    <string name="settings_privacy">Privacy policy</string>
 </resources>

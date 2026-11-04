@@ -2,6 +2,7 @@ package com.stellarlogbook.app.ui.explore
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.stellarlogbook.app.core.GalaxyMath
 import com.stellarlogbook.app.data.local.entity.SystemEntity
 import com.stellarlogbook.app.data.pack.GalaxyPack
 import com.stellarlogbook.app.data.pack.PackDownloader
@@ -9,6 +10,7 @@ import com.stellarlogbook.app.data.pack.PackManager
 import com.stellarlogbook.app.data.remote.EdsmApi
 import com.stellarlogbook.app.data.remote.SphereSystemDto
 import com.stellarlogbook.app.data.repo.ExplorerRepository
+import com.stellarlogbook.app.data.target.TargetManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,12 +18,14 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.Locale
 
 class ExploreViewModel(
     private val repository: ExplorerRepository,
     private val api: EdsmApi,
     private val packManager: PackManager,
-    private val packDownloader: PackDownloader
+    private val packDownloader: PackDownloader,
+    private val targetManager: TargetManager
 ) : ViewModel() {
 
     val latestVisit: Flow<SystemEntity?> = repository.latestVisit()
@@ -140,6 +144,32 @@ class ExploreViewModel(
 
     fun refreshPackStatus() {
         _packInstalled.value = packManager.isInstalled()
+    }
+
+    /** Set a known system as the current target (persistent notification). */
+    fun setTargetFor(sys: SphereSystemDto) {
+        val name = sys.name ?: return
+        val c = sys.coords ?: return
+        if (c.x == null || c.y == null || c.z == null) return
+        viewModelScope.launch {
+            val dist = distanceFromHere(c.x, c.y, c.z)
+            targetManager.setTarget(name, c.x.toFloat(), c.y.toFloat(), c.z.toFloat(), dist)
+        }
+    }
+
+    /** Set an uncharted gap as the current target. */
+    fun setTargetForGap(gap: GalaxyPack.Gap) {
+        val name = "Uncharted %.0f, %.0f, %.0f".format(Locale.getDefault(), gap.x, gap.y, gap.z)
+        viewModelScope.launch {
+            val dist = distanceFromHere(gap.x.toDouble(), gap.y.toDouble(), gap.z.toDouble())
+            targetManager.setTarget(name, gap.x, gap.y, gap.z, dist)
+        }
+    }
+
+    private suspend fun distanceFromHere(x: Double, y: Double, z: Double): Double? {
+        val sys = repository.latestVisit().first() ?: return null
+        if (sys.x == null || sys.y == null || sys.z == null) return null
+        return GalaxyMath.distance(sys.x, sys.y, sys.z, x, y, z)
     }
 
     private suspend fun position(): SystemEntity? {

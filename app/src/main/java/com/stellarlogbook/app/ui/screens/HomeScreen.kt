@@ -43,6 +43,7 @@ fun HomeScreen(container: AppContainer, onOpenSettings: () -> Unit) {
     val codex by vm.codexCount.collectAsState(initial = 0)
     val lastSync by vm.lastSyncAt.collectAsState(initial = 0L)
     val syncStatus by vm.syncStatus.collectAsState()
+    val target by container.targetManager.target.collectAsState(initial = null)
 
     LazyColumn(
         contentPadding = PaddingValues(16.dp),
@@ -59,6 +60,9 @@ fun HomeScreen(container: AppContainer, onOpenSettings: () -> Unit) {
             )
         }
         item { CurrentSystemCard(latest) }
+        target?.let { t ->
+            item { TargetCard(t, onClear = { container.targetManager.clear() }) }
+        }
         item { TotalsCard(visited, discoveries, codex) }
         item {
             SyncCard(
@@ -97,6 +101,27 @@ private fun CurrentSystemCard(latest: SystemEntity?) {
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun TargetCard(target: com.stellarlogbook.app.data.target.TargetManager.Target, onClear: () -> Unit) {
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Text(
+                "Target",
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Text(target.name, style = MaterialTheme.typography.titleMedium)
+            Text(
+                "%.2f, %.2f, %.2f".format(target.x, target.y, target.z),
+                style = MaterialTheme.typography.bodySmall
+            )
+            Button(onClick = onClear, modifier = Modifier.fillMaxWidth()) {
+                Text("Clear target")
             }
         }
     }

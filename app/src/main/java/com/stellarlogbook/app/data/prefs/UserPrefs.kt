@@ -11,6 +11,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
+import androidx.datastore.preferences.core.floatPreferencesKey
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
@@ -47,6 +48,11 @@ class UserPrefs(context: Context) {
     val syncIntervalHours: Flow<Int> = ds.data.map { it[KEY_SYNC_INTERVAL] ?: DEFAULT_INTERVAL }
     val wifiOnly: Flow<Boolean> = ds.data.map { it[KEY_WIFI_ONLY] ?: true }
 
+    val targetName: Flow<String?> = ds.data.map { it[KEY_TARGET_NAME] }
+    val targetX: Flow<Float?> = ds.data.map { it[KEY_TARGET_X] }
+    val targetY: Flow<Float?> = ds.data.map { it[KEY_TARGET_Y] }
+    val targetZ: Flow<Float?> = ds.data.map { it[KEY_TARGET_Z] }
+
     /** API key: read-through cache from encrypted storage (no flow — encrypted). */
     suspend fun apiKey(): String? {
         _apiKey.value?.let { return it }
@@ -72,6 +78,24 @@ class UserPrefs(context: Context) {
         ds.edit { it[KEY_LAST_SYNC] = epochMillis }
     }
 
+    suspend fun setTarget(name: String, x: Float, y: Float, z: Float) {
+        ds.edit { prefs ->
+            prefs[KEY_TARGET_NAME] = name
+            prefs[KEY_TARGET_X] = x
+            prefs[KEY_TARGET_Y] = y
+            prefs[KEY_TARGET_Z] = z
+        }
+    }
+
+    suspend fun clearTarget() {
+        ds.edit { prefs ->
+            prefs.remove(KEY_TARGET_NAME)
+            prefs.remove(KEY_TARGET_X)
+            prefs.remove(KEY_TARGET_Y)
+            prefs.remove(KEY_TARGET_Z)
+        }
+    }
+
     companion object {
         const val DEFAULT_INTERVAL = 6
         private const val KEY_API_KEY = "edsm_api_key" // key inside EncryptedSharedPreferences
@@ -79,5 +103,9 @@ class UserPrefs(context: Context) {
         private val KEY_LAST_SYNC = longPreferencesKey("last_sync_at")
         private val KEY_SYNC_INTERVAL = intPreferencesKey("sync_interval_hours")
         private val KEY_WIFI_ONLY = booleanPreferencesKey("wifi_only")
+        private val KEY_TARGET_NAME = stringPreferencesKey("target_name")
+        private val KEY_TARGET_X = floatPreferencesKey("target_x")
+        private val KEY_TARGET_Y = floatPreferencesKey("target_y")
+        private val KEY_TARGET_Z = floatPreferencesKey("target_z")
     }
 }

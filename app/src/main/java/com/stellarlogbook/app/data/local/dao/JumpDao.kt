@@ -15,4 +15,7 @@ interface JumpDao {
 
     @Query("SELECT * FROM jumps ORDER BY at DESC LIMIT 1")
     fun latest(): Flow<JumpEntity?>
+
+    @Query("SELECT * FROM jumps ORDER BY at ASC LIMIT :limit")
+    fun recent(limit: Int): Flow<List<JumpEntity>>
 }

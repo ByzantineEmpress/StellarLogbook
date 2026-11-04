@@ -17,6 +17,7 @@ import com.stellarlogbook.app.data.sync.EdsmDiagnostics
 import com.stellarlogbook.app.data.sync.EdsmSyncEngine
 import com.stellarlogbook.app.data.sync.JournalImporter
 import com.stellarlogbook.app.data.sync.SyncCredentials
+import com.stellarlogbook.app.data.target.TargetManager
 import com.stellarlogbook.app.data.update.UpdateManager
 import kotlinx.coroutines.flow.first
 import kotlinx.serialization.json.Json
@@ -91,6 +92,7 @@ class AppContainer(context: Context) {
     val journalImporter: JournalImporter = JournalImporter(journalParser, store)
     val diagnostics: EdsmDiagnostics = EdsmDiagnostics(api, userPrefs)
     val updateManager: UpdateManager = UpdateManager(appContext, httpClient)
+    val targetManager: TargetManager = TargetManager(appContext, userPrefs)
 }
 
 fun Context.container(): AppContainer =

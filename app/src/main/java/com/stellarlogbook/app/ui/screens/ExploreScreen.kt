@@ -1,5 +1,10 @@
 package com.stellarlogbook.app.ui.screens
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -9,9 +14,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Flag
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
@@ -22,12 +31,15 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.stellarlogbook.app.core.AppContainer
 import com.stellarlogbook.app.core.GalaxyMath
@@ -42,7 +54,7 @@ import java.util.Locale
 @Composable
 fun ExploreScreen(container: AppContainer) {
     val vm: ExploreViewModel = viewModel {
-        ExploreViewModel(container.repository, container.api, container.packManager, container.packDownloader)
+        ExploreViewModel(container.repository, container.api, container.packManager, container.packDownloader, container.targetManager)
     }
     val latest by vm.latestVisit.collectAsState(initial = null)
     val busy by vm.busy.collectAsState()
@@ -51,6 +63,27 @@ fun ExploreScreen(container: AppContainer) {
     val packInstalled by vm.packInstalled.collectAsState()
     val download by vm.download.collectAsState()
     val clipboard = LocalClipboardManager.current
+    val context = LocalContext.current
+
+    var pendingTargetAction by remember { mutableStateOf<(() -> Unit)?>(null) }
+    val permissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        if (granted) pendingTargetAction?.invoke()
+        pendingTargetAction = null
+    }
+
+    fun setTargetWithPermission(action: () -> Unit) {
+        if (Build.VERSION.SDK_INT >= 33 &&
+            ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) !=
+            PackageManager.PERMISSION_GRANTED
+        ) {
+            pendingTargetAction = action
+            permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        } else {
+            action()
+        }
+    }
 
     var radius by remember { mutableFloatStateOf(30f) }
 
@@ -159,6 +192,11 @@ fun ExploreScreen(container: AppContainer) {
                             ListItem(
                                 headlineContent = { Text(sys.name ?: "?") },
                                 supportingContent = { Text(sphereSupport(sys)) },
+                                trailingContent = {
+                                    IconButton(onClick = { setTargetWithPermission { vm.setTargetFor(sys) } }) {
+                                        Icon(Icons.Filled.Flag, contentDescription = "Set as target")
+                                    }
+                                },
                                 modifier = Modifier.clickable {
                                     clipboard.setText(AnnotatedString(sys.name ?: ""))
                                 }
@@ -195,6 +233,11 @@ fun ExploreScreen(container: AppContainer) {
                                 },
                                 supportingContent = {
                                     Text("%.0f ly away".format(Locale.getDefault(), gap.distanceLy))
+                                },
+                                trailingContent = {
+                                    IconButton(onClick = { setTargetWithPermission { vm.setTargetForGap(gap) } }) {
+                                        Icon(Icons.Filled.Flag, contentDescription = "Set as target")
+                                    }
                                 },
                                 modifier = Modifier.clickable {
                                     clipboard.setText(

@@ -347,9 +347,36 @@ fun SettingsScreen(container: AppContainer, onBack: () -> Unit) {
                     Text(it, color = MaterialTheme.colorScheme.error)
                 }
             }
+
+            // About
+            item { HorizontalDivider() }
+            item {
+                Text(
+                    stringResource(R.string.settings_about),
+                    style = MaterialTheme.typography.labelLarge
+                )
+            }
+            item {
+                Text(stringResource(R.string.settings_about_text), style = MaterialTheme.typography.bodySmall)
+            }
+            item {
+                Button(
+                    onClick = {
+                        context.startActivity(
+                            Intent(Intent.ACTION_VIEW, Uri.parse(PRIVACY_URL))
+                        )
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(stringResource(R.string.settings_privacy))
+                }
+            }
         }
     }
 }
+
+private const val PRIVACY_URL =
+    "https://github.com/ByzantineEmpress/StellarLogbook/blob/main/docs/PRIVACY.md"
 
 private fun installApk(context: Context, file: File) {
     if (!context.packageManager.canRequestPackageInstalls()) {
