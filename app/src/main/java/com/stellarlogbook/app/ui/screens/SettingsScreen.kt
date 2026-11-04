@@ -395,20 +395,3 @@ fun SettingsScreen(container: AppContainer, onBack: () -> Unit) {
 
 private const val PRIVACY_URL =
     "https://github.com/ByzantineEmpress/StellarLogbook/blob/main/docs/PRIVACY.md"
-
-private fun installApk(context: Context, file: File) {
-    if (!context.packageManager.canRequestPackageInstalls()) {
-        val intent = Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES).apply {
-            data = Uri.parse("package:${context.packageName}")
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        }
-        context.startActivity(intent)
-        return
-    }
-    val uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
-    val intent = Intent(Intent.ACTION_VIEW).apply {
-        setDataAndType(uri, "application/vnd.android.package-archive")
-        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK)
-    }
-    context.startActivity(intent)
-}

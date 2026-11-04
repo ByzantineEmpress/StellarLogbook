@@ -34,7 +34,7 @@ object ApkInstaller {
                 intent,
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
-            session.commit(pending)
+            session.commit(pending.intentSender)
         } finally {
             session.close()
         }
