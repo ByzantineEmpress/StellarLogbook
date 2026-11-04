@@ -15,7 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Flag
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
@@ -194,7 +194,7 @@ fun ExploreScreen(container: AppContainer) {
                                 supportingContent = { Text(sphereSupport(sys)) },
                                 trailingContent = {
                                     IconButton(onClick = { setTargetWithPermission { vm.setTargetFor(sys) } }) {
-                                        Icon(Icons.Filled.Flag, contentDescription = "Set as target")
+                                        Icon(Icons.Filled.Notifications, contentDescription = "Set as target")
                                     }
                                 },
                                 modifier = Modifier.clickable {
@@ -236,7 +236,7 @@ fun ExploreScreen(container: AppContainer) {
                                 },
                                 trailingContent = {
                                     IconButton(onClick = { setTargetWithPermission { vm.setTargetForGap(gap) } }) {
-                                        Icon(Icons.Filled.Flag, contentDescription = "Set as target")
+                                        Icon(Icons.Filled.Notifications, contentDescription = "Set as target")
                                     }
                                 },
                                 modifier = Modifier.clickable {

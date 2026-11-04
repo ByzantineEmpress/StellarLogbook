@@ -127,7 +127,7 @@ fun AppNavHost(container: AppContainer) {
             }
             composable("discoveries") { DiscoveriesScreen(container) }
             composable("explore") { ExploreScreen(container) }
-            composable("map") { MapScreen() }
+            composable("map") { MapScreen(container) }
             composable(
                 route = "system/{name}",
                 arguments = listOf(navArgument("name") { type = NavType.StringType })
