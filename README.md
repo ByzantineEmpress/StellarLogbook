@@ -29,6 +29,11 @@ encrypted API-key storage, auto-sync scheduling, onboarding help. CI green.
 - Pack builder: `pack/build_pack.mjs` (streams the 3.7 GB dump, retries on
   resets); `.github/workflows/pack.yml` rebuilds + releases monthly.
 
+**Phase 3 (Map & polish)** — shipped in v0.4.0-alpha: galaxy map (visited dots,
+jump trail, gold first-discovery markers, pack-sampled known-systems background,
+pan/zoom/reset), target-system with persistent notification, privacy policy +
+About section, in-app updates (Settings → App updates).
+
 ## The four questions this app answers
 
 | Question | App tab | Data source |
