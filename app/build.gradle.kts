@@ -14,23 +14,44 @@ android {
         applicationId = "com.stellarlogbook.app"
         minSdk = 26
         targetSdk = 35
-        versionCode = 6
-        versionName = "0.5.0-alpha"
+        versionCode = 7
+        versionName = "0.6.0-alpha"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     base {
-        // Proper APK file name: stellar-logbook-v0.3.0-alpha-debug.apk
+        // Proper APK file name: stellar-logbook-v0.6.0-alpha-debug.apk
         archivesName.set("stellar-logbook-v" + defaultConfig.versionName)
     }
 
+    // Pin one signing key across every CI run so in-app updates always install
+    // over previous versions (GitHub runners otherwise mint a new debug key
+    // per run, which Android rejects as a signature mismatch).
+    val keystoreB64 = System.getenv("STELLAR_KEYSTORE_B64")
+    if (!keystoreB64.isNullOrBlank()) {
+        val ksFile = java.io.File(projectDir, "stellar-upload.keystore")
+        ksFile.writeBytes(java.util.Base64.getDecoder().decode(keystoreB64))
+        signingConfigs {
+            create("pinned") {
+                storeFile = ksFile
+                storePassword = System.getenv("STELLAR_KEYSTORE_PASSWORD") ?: ""
+                keyAlias = System.getenv("STELLAR_KEY_ALIAS") ?: "stellar"
+                keyPassword = System.getenv("STELLAR_KEY_PASSWORD") ?: ""
+            }
+        }
+    }
+
     buildTypes {
+        debug {
+            signingConfigs.findByName("pinned")?.let { signingConfig = it }
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfigs.findByName("pinned")?.let { signingConfig = it }
         }
     }
 

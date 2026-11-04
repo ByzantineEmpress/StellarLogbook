@@ -3,7 +3,6 @@ package com.stellarlogbook.app.ui.screens
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.provider.Settings
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -39,7 +38,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.core.content.FileProvider
 import com.stellarlogbook.app.BuildConfig
 import com.stellarlogbook.app.R
 import com.stellarlogbook.app.core.AppContainer
@@ -339,12 +337,28 @@ fun SettingsScreen(container: AppContainer, onBack: () -> Unit) {
             updateReady?.let { file ->
                 item {
                     Button(
-                        onClick = { installApk(context, file) },
+                        onClick = {
+                            scope.launch {
+                                updateError = null
+                                try {
+                                    com.stellarlogbook.app.data.update.ApkInstaller.install(context, file)
+                                } catch (e: Exception) {
+                                    updateError = e.message
+                                }
+                            }
+                        },
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(stringResource(R.string.settings_update_install))
                     }
                 }
+            }
+            item {
+                Text(
+                    stringResource(R.string.settings_update_hint),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
             updateError?.let {
                 item {

@@ -92,6 +92,9 @@
     <string name="settings_update_available">Update available: %1$s</string>
     <string name="settings_update_download">Download update</string>
     <string name="settings_update_install">Install update</string>
+    <string name="settings_update_hint">If installing shows an error about signatures or “App not installed”: uninstall Stellar Logbook once, then download the update again. (One-time: updates from now on share the same signing key.) Your visited data can be re-imported from journal files afterwards.</string>
+    <string name="update_install_failed">Update install failed</string>
+    <string name="update_signature_hint">If the message mentions signatures or “App not installed”: uninstall Stellar Logbook once, then download the update again — this is a one-time change; future updates share one signing key. Your data can be re-imported from journal files.</string>
     <string name="home_sync_empty_hint">EDSM has no flight logs for this commander yet. In EDDiscovery click “Sync To”, or import your journal files in Discoveries.</string>
 
     <!-- Map -->

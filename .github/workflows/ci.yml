@@ -25,6 +25,11 @@ jobs:
 
       - name: Build debug APK and run unit tests
         run: ./gradlew assembleDebug testDebugUnitTest --stacktrace
+        env:
+          STELLAR_KEYSTORE_B64: ${{ secrets.STELLAR_KEYSTORE_B64 }}
+          STELLAR_KEYSTORE_PASSWORD: ${{ secrets.STELLAR_KEYSTORE_PASSWORD }}
+          STELLAR_KEY_ALIAS: ${{ secrets.STELLAR_KEY_ALIAS }}
+          STELLAR_KEY_PASSWORD: ${{ secrets.STELLAR_KEY_PASSWORD }}
 
       - name: Upload debug APK
         uses: actions/upload-artifact@v4
